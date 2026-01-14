@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Externals\glad.c" />
+    <ClCompile Include="Externals\include\stb\stb_image.cpp" />
     <ClCompile Include="src\Buffers\EBO.cpp" />
     <ClCompile Include="src\Buffers\VAO.cpp" />
     <ClCompile Include="src\Buffers\VBO.cpp" />
@@ -150,6 +151,12 @@
     <ClInclude Include="src\Buffers\VAO.h" />
     <ClInclude Include="src\Buffers\VBO.h" />
     <ClInclude Include="src\Shaders\shaderClass.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Externals\include\stb\stb_image.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\Rendi Nurfauzi\OneDrive\Pictures\download (8).jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

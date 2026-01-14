@@ -1,7 +1,7 @@
 #include<iostream>
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
-
+#include<stb/stb_image.h>
 
 #include "Shaders/shaderClass.h"
 #include "Buffers/VAO.h"
@@ -25,19 +25,17 @@ int main()
 
 	//Membuat vertex array berbentuk segitiga
 	GLfloat vertices[] = {
-		//					COORDINATES					//				COLORS					//
-		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,		0.8f,	0.3f,	0.02f, // Lower Left Corner
-		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,			0.8f,	0.3f,	0.02f, // Lower Right Corner
-		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,		1.0f,	0.6f,	0.32f, // Upper Corner
-		-0.25f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,	0.9f,	0.45f,	0.17f, // Inner Left
-		0.25f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,		0.9f,	0.45f,	0.17f, // Inner Right
-		0.0f, -0.5 * float(sqrt(3)) / 3, 0.0f,			0.8f,	0.3f,	0.02f, // Inner Down
+		// Positions        // Colors         // Texture Coords
+		-0.5f, -0.5f, 0.0f,  1,0,0,  0.0f, 0.0f,
+		-0.5f,  0.5f, 0.0f,  0,1,0,  0.0f, 1.0f,
+		 0.5f,  0.5f, 0.0f,  0,0,1,  1.0f, 1.0f,
+		 0.5f, -0.5f, 0.0f,  1,1,1,  1.0f, 0.0f
 	};
 
+
 	GLuint indices[] = {
-		0, 3, 5, // Lower Left Triangle
-		3, 2, 4, // Lower Right Triangle
-		5, 4, 1, // Upper Triangle
+		0, 2, 1,
+		0, 3, 2
 	};
 
 	// Membuat object Window dengan GLFWwindow dengan resolusi 1280, 720, Nama Renderer Engine, Windowed, Tanpa shared OpenGL context
@@ -75,14 +73,45 @@ int main()
 	EBO ebo(indices, sizeof(indices));
 
 	// Menghubungkan VBO ke VAO (layout location = 0)
-	vao.LinkAttribute(vbo, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
-	vao.LinkAttribute(vbo, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	vao.LinkAttribute(vbo, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+	vao.LinkAttribute(vbo, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	vao.LinkAttribute(vbo, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
 	// Unbind VAO
 	vao.Unbind();
 	vbo.Unbind();
 
 	GLuint uniID = glGetUniformLocation(shader.ID, "scale");
+
+	// Texture
+	stbi_set_flip_vertically_on_load(true);
+	int widthImg, heightImg, numColCh;
+	unsigned char* bytes = stbi_load("Externals/Resource/cat.jpg", &widthImg, &heightImg, &numColCh, 0);
+
+
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glActiveTexture(GL_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	// Wrap & filter
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+	// Sesuaikan format
+	GLenum format = (numColCh == 4) ? GL_RGBA : GL_RGB;
+	glTexImage2D(GL_TEXTURE_2D, 0, format, widthImg, heightImg, 0, format, GL_UNSIGNED_BYTE, bytes);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	stbi_image_free(bytes);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	GLuint tex0Uni = glGetUniformLocation(shader.ID, "tex0");
+	shader.Active();
+	glUniform1i(tex0Uni, 0);
 
 	// Selagi object window tidak di ditutup
 	while (!glfwWindowShouldClose(window)) {
@@ -93,11 +122,12 @@ int main()
 		// Menggunakan shader program yang telah disiapkan
 		shader.Active();
 		glUniform1f(uniID, 0.5f);
+		glBindTexture(GL_TEXTURE_2D, texture);
 		// Melakukan binding Vertex Array Object
 		vao.Bind();
 		// Menggambar Array (Primitif Yang Ingin Digunakan, Index awal vertex, Jumlah vertex yang di gambar)
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		// Menukar buffer pada frame setiap looping
 		glfwSwapBuffers(window);
 		// Melakukan prosess semua event yang terjadi
@@ -112,6 +142,7 @@ int main()
 	ebo.Delete();
 	// Penghapusan Shader Program
 	shader.Delete();
+	glDeleteTextures(1, &texture);
 
 	// GLFW Hancurkan object window
 	glfwDestroyWindow(window);
