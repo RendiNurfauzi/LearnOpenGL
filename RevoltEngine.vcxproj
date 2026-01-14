@@ -139,8 +139,11 @@
     <ClCompile Include="src\Buffers\EBO.cpp" />
     <ClCompile Include="src\Buffers\VAO.cpp" />
     <ClCompile Include="src\Buffers\VBO.cpp" />
+    <ClCompile Include="src\Graphics\Mesh.cpp" />
+    <ClCompile Include="src\Graphics\Texture.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Shaders\shaderClass.cpp" />
+    <ClCompile Include="src\Windows\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Shaders\file\default.frag" />
@@ -150,7 +153,11 @@
     <ClInclude Include="src\Buffers\EBO.h" />
     <ClInclude Include="src\Buffers\VAO.h" />
     <ClInclude Include="src\Buffers\VBO.h" />
+    <ClInclude Include="src\Graphics\Mesh.h" />
+    <ClInclude Include="src\Graphics\Texture.h" />
+    <ClInclude Include="src\Math\EngineMath.h" />
     <ClInclude Include="src\Shaders\shaderClass.h" />
+    <ClInclude Include="src\Windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\include\stb\stb_image.h" />
