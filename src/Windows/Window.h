@@ -9,7 +9,7 @@
 class Window {
 
 public:
-
+	operator GLFWwindow* () { return handle; }
 	GLFWwindow* handle;
 	int width, height;
 	Window(int width, int height, const char* title);

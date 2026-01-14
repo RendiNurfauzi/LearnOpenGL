@@ -66,6 +66,14 @@ namespace EngineMath {
         // Negasi & Compound
         Vec3 operator-() const { return { -x, -y, -z }; }
         Vec3& operator+=(const Vec3& o) { x += o.x; y += o.y; z += o.z; return *this; }
+        Vec3& operator-=(const Vec3& o) {
+            x -= o.x; y -= o.y; z -= o.z;
+            return *this;
+        }
+
+        // Untuk melengkapi, tambahkan juga operator *= dan /= jika perlu
+        Vec3& operator*=(float s) { x *= s; y *= s; z *= s; return *this; }
+        Vec3& operator/=(float s) { x /= s; y /= s; z /= s; return *this; }
 
         // Basic Math Operators
         Vec3 operator+(const Vec3& o) const { return { x + o.x, y + o.y, z + o.z }; }
@@ -270,6 +278,36 @@ namespace EngineMath {
             return r;
         }
     };
+
+    // =======================================================
+    // Interpolation & Smoothing (Easing)
+    // =======================================================
+
+    // Lerp standar untuk float
+    inline float lerp(float a, float b, float t) {
+        return a + (b - a) * t;
+    }
+
+    // Smoothstep: Smoothing standar (Hermite Interpolation)
+    // Menghasilkan kurva S yang mulus di awal dan di akhir.
+    inline float smoothstep(float edge0, float edge1, float t) {
+        // Clamp t antara 0 dan 1
+        t = std::fmax(0.0f, std::fmin(1.0f, (t - edge0) / (edge1 - edge0)));
+        // Formula: 3t^2 - 2t^3
+        return t * t * (3.0f - 2.0f * t);
+    }
+
+    // Smootherstep: Versi lebih halus dari Ken Perlin
+    // Formula: 6t^5 - 15t^4 + 10t^3
+    inline float smootherstep(float edge0, float edge1, float t) {
+        t = std::fmax(0.0f, std::fmin(1.0f, (t - edge0) / (edge1 - edge0)));
+        return t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f);
+    }
+
+    // Sine Ease In-Out: Smoothing berbasis gelombang sinus
+    inline float sineEaseInOut(float t) {
+        return -(std::cos(PI * t) - 1.0f) / 2.0f;
+    }
 
     // Pointer helper untuk API Grafis
     inline const float* value_ptr(const Mat4& mat) {

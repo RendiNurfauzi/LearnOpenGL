@@ -144,6 +144,7 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Shaders\shaderClass.cpp" />
     <ClCompile Include="src\Windows\Window.cpp" />
+    <ClCompile Include="src\World\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Shaders\file\default.frag" />
@@ -158,6 +159,7 @@
     <ClInclude Include="src\Math\EngineMath.h" />
     <ClInclude Include="src\Shaders\shaderClass.h" />
     <ClInclude Include="src\Windows\Window.h" />
+    <ClInclude Include="src\World\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\include\stb\stb_image.h" />
